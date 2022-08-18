@@ -1,4 +1,4 @@
-module subscriptions
+module subscriptionss
 
 go 1.18
 

@@ -30,7 +30,6 @@ func Connect() *sql.DB{
 		conn, err := OpenDb(dsn)
 		if err != nil {
 			log.Println("Postgres not ready....")
-			attempts++
 		} else {
 			log.Println("Connected to Database")
 			return conn
@@ -42,6 +41,7 @@ func Connect() *sql.DB{
 
 		log.Println("Backing off for one second...")
 		time.Sleep(1 * time.Second)
+		attempts++
 		continue;
 	}
 }
@@ -53,4 +53,5 @@ func InitDb() *sql.DB{
 	if conn == nil {
 		log.Panic("Cannot connect to database!")
 	}
+	return conn
 }
