@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -76,4 +77,16 @@ func RedisConnect() *redis.Pool{
 		},
 	}
 	return pool
+}
+
+func (app *Config) Serve() {
+	s := &http.Server{
+		Addr: fmt.Sprintf(":%s", WEB_PORT),
+		Handler: app.Routes(),
+	}
+	app.InfoLog.Println("Starting Web Server...")
+	if err := s.ListenAndServe(); err != nil {
+		log.Panic(err)
+	}
+
 }
