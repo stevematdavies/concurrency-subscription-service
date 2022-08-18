@@ -88,5 +88,4 @@ func (app *Config) Serve() {
 	if err := s.ListenAndServe(); err != nil {
 		log.Panic(err)
 	}
-
 }
