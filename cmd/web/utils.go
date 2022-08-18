@@ -3,9 +3,13 @@ package main
 import (
 	"database/sql"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/alexedwards/scs/redisstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/gomodule/redigo/redis"
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -46,12 +50,30 @@ func Connect() *sql.DB{
 	}
 }
 
-
-
 func InitDb() *sql.DB{
 	conn := Connect()
 	if conn == nil {
 		log.Panic("Cannot connect to database!")
 	}
 	return conn
+}
+
+func InitSession() *scs.SessionManager{
+	s := scs.New()
+	s.Store = redisstore.New(RedisConnect())
+	s.Lifetime = 24 * time.Hour
+	s.Cookie.Persist = true
+	s.Cookie.SameSite = http.SameSiteLaxMode
+	s.Cookie.Secure = true
+	return s
+}
+
+func RedisConnect() *redis.Pool{
+	pool := &redis.Pool{
+		MaxIdle: 10,
+		Dial: func()(redis.Conn, error) {
+			return redis.Dial("tcp", os.Getenv("REDIS"))
+		},
+	}
+	return pool
 }

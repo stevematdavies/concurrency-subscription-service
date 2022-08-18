@@ -6,9 +6,8 @@ func main() {
 	// Connect to a database
 	db := InitDb()
 	db.Ping()
-
-	
 	// Create Sessions
+	session := InitSession()
 	// Create Channels
 	// Create a Wait Group
 	// Setup Application Config
