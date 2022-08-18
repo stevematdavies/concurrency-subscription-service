@@ -4,6 +4,10 @@ const WEB_PORT = "8080"
 
 func main() {
 	// Connect to a database
+	db := InitDb()
+	db.Ping()
+
+	
 	// Create Sessions
 	// Create Channels
 	// Create a Wait Group
