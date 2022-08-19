@@ -31,7 +31,13 @@ func(p *Plan) GetAll()([]*Plan, error){
 
 	for rows.Next() {
 		var plan Plan
-		if err := rows.Scan(&plan); err!= nil {
+		if err := rows.Scan(
+			&plan.ID,
+			&plan.PlanName,
+			&plan.PlanAmount,
+			&plan.CreatedAt,
+			&plan.UpdatedAt,
+		); err!= nil {
 			log.Println("Error scanning", err)
 			return nil, err
 		}
@@ -50,7 +56,13 @@ func (p *Plan) GetOne(id int) (*Plan, error){
 	var plan Plan
 	row := db.QueryRowContext(ctx, query,id)
 	
-	if err := row.Scan(&plan); err != nil {
+	if err := row.Scan(
+		&plan.ID,
+		&plan.PlanName,
+		&plan.PlanAmount,
+		&plan.CreatedAt,
+		&plan.UpdatedAt,
+	); err != nil {
 		return nil, err
 	}
 	
@@ -64,7 +76,7 @@ func(p *Plan) Subscribe(user User, plan Plan) error {
 	stmt := `insert into user_plans (user_id, plan_id, created_at, updated_at)
 			 values ($1,$2,$3,$4)`
 	
-	_, err := db.ExecuteContext(ctx, stmt, user.ID, plan.ID, time.Now(), time.Now())
+	_, err := db.ExecContext(ctx, stmt, user.ID, plan.ID, time.Now(), time.Now())
 	if err != nil {
 		return err
 	}

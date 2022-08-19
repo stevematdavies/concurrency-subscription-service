@@ -37,9 +37,17 @@ func(u *User) GetAll()([]*User, error){
 
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user); err!= nil {
+		if err := rows.Scan(
+			&user.ID,
+			&user.Email,
+			&user.FirstName,
+			&user.LastName,
+			&user.Active,
+			&user.IsAdmin,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		); err!= nil {
 			log.Println("Error scanning", err)
-			return err, nil
 		}
 		users = append(users, &user)
 	}
@@ -55,7 +63,16 @@ func (u *User) GetUserByEmail(email string) (*User, error){
 	var user User
 	row := db.QueryRowContext(ctx, query, email)
 	
-	if err := row.Scan(&user); err != nil {
+	if err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.Active,
+		&user.IsAdmin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	); err != nil {
 		return nil, err
 	}
 
@@ -70,7 +87,16 @@ func (u *User) GetOne(id int) (*User, error){
 	var user User
 	row := db.QueryRowContext(ctx, query,id)
 	
-	if err := row.Scan(&user); err != nil {
+	if err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.Active,
+		&user.IsAdmin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	); err != nil {
 		return nil, err
 	}
 
@@ -81,7 +107,13 @@ func (u *User) GetOne(id int) (*User, error){
 	
 	var plan Plan
 	row = db.QueryRowContext(ctx, query,user.ID)
-	if err := row.Scan(&plan); err == nil {
+	if err := row.Scan(
+		&plan.ID,
+		&plan.PlanName,
+		&plan.PlanAmount,
+		&plan.CreatedAt,
+		&plan.UpdatedAt,
+	); err == nil {
 		user.Plan = &plan
 	}
 
@@ -100,7 +132,7 @@ func(u *User) Update() error {
 			 updated_at = $5
 			 where id = $6`
 	
-	_, err := db.ExecuteContext(ctx, stmt, u.Email, u.FirstName, u.LastName, u.Active, time.Now(), u.ID)
+	_, err := db.ExecContext(ctx, stmt, u.Email, u.FirstName, u.LastName, u.Active, time.Now(), u.ID)
 
 	if err != nil {
 		return err
@@ -115,7 +147,7 @@ func(u *User) Delete() error {
 
 	stmt := `delete from users where id = $1`
 
-	_, err := db.ExecuteContext(ctx, stmt, u.ID)
+	_, err := db.ExecContext(ctx, stmt, u.ID)
 	if err != nil {
 		return err
 	}
@@ -129,7 +161,7 @@ func(u *User) DeleteByID(id int) error {
 
 	stmt := `delete from users where id = $1`
 
-	_, err := db.ExecuteContext(ctx, stmt, id)
+	_, err := db.ExecContext(ctx, stmt, id)
 	if err != nil {
 		return err
 	}
@@ -149,10 +181,10 @@ func(u *User) Insert(user User)(int, error){
 	stmt := `insert into users (email, first_name. last_name, password, user_active, created_at, updated_at)
 			values($1,$2,$3,$4,$5,$6,$7) returning id`
 	
-	if err = db.QueryRowContext(ctx, stmt, user.Email, user.FirstName, user.LastName, hp, user.Active, tine.Now(), time.Now()); err != nil {
+	if err = db.QueryRowContext(ctx, stmt, user.Email, user.FirstName, user.LastName, hp, user.Active, time.Now(), time.Now()).Scan(&nID); err != nil {
 		return 0, err
 	}
-
+	
 	return nID, nil
 
 }
@@ -167,7 +199,7 @@ func(u *User) ResetPassword(password string) error {
 	}
 	 stmt := `updated users set password = $1 where id = $2`
 
-	 _, err = db.ExecuteContext(ctx, stmt, hp, u.ID)
+	 _, err = db.ExecContext(ctx, stmt, hp, u.ID)
 	 if err != nil {
 		return err
 	 }
