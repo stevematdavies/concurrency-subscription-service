@@ -1,0 +1,7 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/steve/Projects/Personal/Go/subscriptions'
+echo "Building..."
+env CGO_ENABLED=0 go build -ldflags="-s -w" -o subscriptionapp ./cmd/web
+echo "Built!"
+make: Leaving directory '/home/steve/Projects/Personal/Go/subscriptions'
+ 

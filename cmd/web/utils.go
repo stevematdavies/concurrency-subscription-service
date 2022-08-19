@@ -90,3 +90,9 @@ func (app *Config) Serve() {
 	}
 }
 
+func(app *Config) LoadSession(next http.Handler) http.Handler {
+	return app.Session.LoadAndSave(next)
+}
+
+
+
