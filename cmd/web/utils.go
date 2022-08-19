@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/alexedwards/scs/redisstore"
@@ -92,6 +94,20 @@ func (app *Config) Serve() {
 
 func(app *Config) LoadSession(next http.Handler) http.Handler {
 	return app.Session.LoadAndSave(next)
+}
+
+func(app *Config) Shutdown(){
+	app.InfoLog.Println("Running cleanup tasks...")
+	app.Wg.Wait()
+	app.InfoLog.Println("Closing channels and shutting down application")
+}
+
+func(app *Config) ListenForShutdown(){
+	qc := make(chan os.Signal, 1)
+	signal.Notify(qc, syscall.SIGINT, syscall.SIGTERM)
+	<- qc
+	app.Shutdown()
+	os.Exit(0)
 }
 
 

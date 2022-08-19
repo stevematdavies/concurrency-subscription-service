@@ -17,5 +17,7 @@ func main() {
 		ErrorLog: log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 	}
 
+	go app.ListenForShutdown()
+
 	app.Serve()
 }
