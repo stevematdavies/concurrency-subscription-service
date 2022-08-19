@@ -54,6 +54,9 @@ func (app *Config) DoLogin(w http.ResponseWriter, r *http.Request){
 }
 
 func (app *Config) DoLogout(w http.ResponseWriter, r *http.Request){
+	_ = app.Session.Destroy(r.Context())
+	_ = app.Session.RenewToken(r.Context())
+	http.Redirect(w,r,"/", http.StatusSeeOther)
 	
 }
 
