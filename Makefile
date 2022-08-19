@@ -1,6 +1,6 @@
 BINARY_NAME=subscriptionapp
 DSN="host=localhost port=5432 user=postgres password=postgres dbname=concurrency sslmode=disable"
-REDIS="127.0.0.6379"
+REDIS=127.0.0.1:6379
 
 ## build: builds the binary
 build:

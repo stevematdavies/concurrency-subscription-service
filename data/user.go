@@ -68,6 +68,7 @@ func (u *User) GetUserByEmail(email string) (*User, error){
 		&user.Email,
 		&user.FirstName,
 		&user.LastName,
+		&user.Password,
 		&user.Active,
 		&user.IsAdmin,
 		&user.CreatedAt,
@@ -75,6 +76,8 @@ func (u *User) GetUserByEmail(email string) (*User, error){
 	); err != nil {
 		return nil, err
 	}
+
+	log.Println(&user)
 
 	return &user, nil
 }

@@ -2,11 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"subscriptionss/data"
 	"syscall"
 	"time"
 
@@ -62,6 +64,7 @@ func InitDb() *sql.DB{
 }
 
 func InitSession() *scs.SessionManager{
+	gob.Register(data.User{})
 	s := scs.New()
 	s.Store = redisstore.New(RedisConnect())
 	s.Lifetime = 24 * time.Hour
